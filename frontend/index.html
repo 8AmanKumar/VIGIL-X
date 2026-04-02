@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VigilX — AI-Powered Real-Time Bot Defence</title>
+    <meta name="description" content="VigilX is an intelligent, invisible bot detection system that analyzes behavioral biometrics to protect your web applications. Privacy-first, zero friction, DPDP Act compliant.">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+
+    <link rel="stylesheet" href="styles/base.css">
+    <link rel="stylesheet" href="styles/components.css">
+    <link rel="stylesheet" href="styles/animations.css">
+    <link rel="stylesheet" href="styles/pages/home.css">
+    <link rel="stylesheet" href="styles/pages/howitworks.css">
+    <link rel="stylesheet" href="styles/pages/demo.css">
+    <link rel="stylesheet" href="styles/pages/pricing.css">
+    <link rel="stylesheet" href="styles/pages/login.css">
+    <link rel="stylesheet" href="styles/components/chatbot.css">
+</head>
+<body>
+    <!-- LOADING SCREEN -->
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-content">
+            <div class="loader-shield">
+                <svg viewBox="0 0 80 80" fill="none">
+                    <path d="M40 5L10 20V40C10 57.5 22.5 73.5 40 78C57.5 73.5 70 57.5 70 40V20L40 5Z"
+                          stroke="url(#loaderGrad)" stroke-width="2.5" fill="url(#loaderFill)"/>
+                    <path d="M30 40L37 47L52 32" stroke="#00ff88" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="loader-check"/>
+                    <defs>
+                        <linearGradient id="loaderGrad" x1="10" y1="5" x2="70" y2="78">
+                            <stop offset="0%" stop-color="#00ff88"/>
+                            <stop offset="100%" stop-color="#00b4d8"/>
+                        </linearGradient>
+                        <linearGradient id="loaderFill" x1="10" y1="5" x2="70" y2="78">
+                            <stop offset="0%" stop-color="rgba(0,255,136,0.1)"/>
+                            <stop offset="100%" stop-color="rgba(0,180,216,0.05)"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+            </div>
+            <div class="loader-text">Initializing VigilX</div>
+            <div class="loader-bar"><div class="loader-bar-fill"></div></div>
+        </div>
+    </div>
+
+    <!-- NAVBAR -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#home" class="nav-logo" id="navLogo">
+                <svg viewBox="0 0 32 32" fill="none" class="logo-icon">
+                    <path d="M16 2L4 8V16C4 23 9.5 29.4 16 31.2C22.5 29.4 28 23 28 16V8L16 2Z"
+                          stroke="url(#navGrad)" stroke-width="1.8" fill="url(#navFill)"/>
+                    <path d="M12 16L14.8 18.8L20.8 12.8" stroke="#00ff88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <defs>
+                        <linearGradient id="navGrad" x1="4" y1="2" x2="28" y2="31">
+                            <stop offset="0%" stop-color="#00ff88"/>
+                            <stop offset="100%" stop-color="#00b4d8"/>
+                        </linearGradient>
+                        <linearGradient id="navFill" x1="4" y1="2" x2="28" y2="31">
+                            <stop offset="0%" stop-color="rgba(0,255,136,0.08)"/>
+                            <stop offset="100%" stop-color="rgba(0,180,216,0.04)"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <span class="logo-text"><span class="logo-accent">Vigil</span>X</span>
+            </a>
+            <div class="nav-links" id="navLinks">
+                <a href="#home" class="nav-link active" data-page="home">Home</a>
+                <a href="#how-it-works" class="nav-link" data-page="how-it-works">How It Works</a>
+                <a href="#demo" class="nav-link" data-page="demo">Live Demo</a>
+                <a href="#pricing" class="nav-link" data-page="pricing">Pricing</a>
+                <a href="#login" class="nav-link nav-btn-primary" data-page="login" style="margin-left: 15px; padding: 6px 12px; background: rgba(0,255,136,0.1); border: 1px solid #00ff88; color: #00ff88; border-radius: 4px;">Sign In</a>
+            </div>
+            <div class="nav-actions">
+                <div class="nav-status" id="navStatus">
+                    <span class="status-dot"></span>
+                    <span class="status-text">Protected</span>
+                </div>
+                <button class="nav-hamburger" id="navHamburger" aria-label="Toggle menu">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ==================== HOME PAGE ==================== -->
+    <main class="page page-active" id="page-home" data-page="home">
+        <canvas id="heroCanvas" class="hero-canvas"></canvas>
+        <div class="bg-grid-overlay"></div>
+        <div class="floating-orb hero-orb-1"></div>
+        <div class="floating-orb hero-orb-2"></div>
+        <div class="floating-orb hero-orb-3"></div>
+
+        <section class="hero-section">
+            <div class="container">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-pulse"></span>
+                        <span>AI-Powered Bot Defence</span>
+                    </div>
+                    <h1 class="hero-title">
+                        <span class="hero-line">Invisible</span>
+                        <span class="hero-line gradient-text">Protection</span>
+                        <span class="hero-line">For The Web</span>
+                    </h1>
+                    <p class="hero-desc">VigilX detects bots by analyzing <em>how</em> users behave — not what they click. Zero friction. Zero CAPTCHAs. Privacy-first.</p>
+                    <div class="hero-actions">
+                        <a href="#demo" class="btn btn-primary" data-navigate="demo">
+                            <span>Try Live Demo</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                        </a>
+                        <a href="#how-it-works" class="btn btn-ghost" data-navigate="how-it-works">
+                            <span>How It Works</span>
+                        </a>
+                    </div>
+                    <div class="hero-stats">
+                        <div class="hero-stat">
+                            <span class="stat-number" data-target="50">0</span><span class="stat-suffix">&lt;ms</span>
+                            <span class="stat-label">Inference</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="stat-number" data-target="99.2">0</span><span class="stat-suffix">%</span>
+                            <span class="stat-label">Accuracy</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="stat-number" data-target="15">0</span><span class="stat-suffix">&lt;KB</span>
+                            <span class="stat-label">SDK Size</span>
+                        </div>
+                        <div class="hero-stat-divider"></div>
+                        <div class="hero-stat">
+                            <span class="stat-number" data-target="0">0</span><span class="stat-suffix">ms</span>
+                            <span class="stat-label">Page Impact</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="live-counter-section">
+            <div class="container">
+                <div class="live-counter-bar">
+                    <div class="counter-item">
+                        <span class="counter-icon">🛡️</span>
+                        <div class="counter-info">
+                            <span class="counter-value" id="botsBlocked">0</span>
+                            <span class="counter-label">Bots Blocked Today</span>
+                        </div>
+                    </div>
+                    <div class="counter-divider"></div>
+                    <div class="counter-item">
+                        <span class="counter-icon">👥</span>
+                        <div class="counter-info">
+                            <span class="counter-value" id="humansVerified">0</span>
+                            <span class="counter-label">Humans Verified</span>
+                        </div>
+                    </div>
+                    <div class="counter-divider"></div>
+                    <div class="counter-item">
+                        <span class="counter-icon">⚡</span>
+                        <div class="counter-info">
+                            <span class="counter-value" id="avgLatency">0</span>
+                            <span class="counter-label">Avg Latency (ms)</span>
+                        </div>
+                    </div>
+                    <div class="counter-divider"></div>
+                    <div class="counter-item">
+                        <span class="counter-icon">🎯</span>
+                        <div class="counter-info">
+                            <span class="counter-value" id="threatLevel">Low</span>
+                            <span class="counter-label">Threat Level</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag tag-green">WHY VIGILX</span>
+                    <h2 class="section-title">Next-Gen Bot Detection</h2>
+                    <p class="section-desc">No CAPTCHAs. No user friction. Just invisible AI-powered protection.</p>
+                </div>
+                <div class="features-grid">
+                    <div class="feature-card" data-tilt>
+                        <div class="feature-card-glow"></div>
+                        <div class="feature-icon-wrap"><span class="feature-icon">🖱️</span></div>
+                        <h3>Mouse Dynamics</h3>
+                        <p>Velocity, acceleration, jitter, curvature — humans are imprecise; bots are mechanically perfect.</p>
+                    </div>
+                    <div class="feature-card" data-tilt>
+                        <div class="feature-card-glow"></div>
+                        <div class="feature-icon-wrap"><span class="feature-icon">⌨️</span></div>
+                        <h3>Typing Biometrics</h3>
+                        <p>Key-hold time, flight time, rhythm patterns unique to each human. Bots can't fake natural typing.</p>
+                    </div>
+                    <div class="feature-card" data-tilt>
+                        <div class="feature-card-glow"></div>
+                        <div class="feature-icon-wrap"><span class="feature-icon">📱</span></div>
+                        <h3>Touch & Scroll</h3>
+                        <p>Touch pressure, scroll velocity, swipe angles — dedicated models for mobile and desktop.</p>
+                    </div>
+                    <div class="feature-card" data-tilt>
+                        <div class="feature-card-glow"></div>
+                        <div class="feature-icon-wrap"><span class="feature-icon">🧠</span></div>
+                        <h3>Adaptive ML</h3>
+                        <p>Self-retraining Random Forest classifier with real-time feedback loop. Sub-50ms inference.</p>
+                    </div>
+                    <div class="feature-card" data-tilt>
+                        <div class="feature-card-glow"></div>
+                        <div class="feature-icon-wrap"><span class="feature-icon">🔒</span></div>
+                        <h3>Privacy-First</h3>
+                        <p>Session-scoped hashed IDs. No PII stored. DPDP Act 2023 compliant. Auto-delete after scoring.</p>
+                    </div>
+                    <div class="feature-card" data-tilt>
+                        <div class="feature-card-glow"></div>
+                        <div class="feature-icon-wrap"><span class="feature-icon">⚡</span></div>
+                        <h3>Zero Impact</h3>
+                        <p>Lightweight &lt;15KB SDK. Async, non-blocking scoring. Your users never notice it's there.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="protection-section">
+            <div class="container">
+                <div class="protection-grid">
+                    <div class="protection-card prot-human">
+                        <div class="prot-emoji">👤</div>
+                        <h3>Normal Human</h3>
+                        <div class="prot-result prot-allow">Instant Access</div>
+                        <div class="prot-score">Score: 0.94</div>
+                    </div>
+                    <div class="protection-card prot-suspicious">
+                        <div class="prot-emoji">⚠️</div>
+                        <h3>Suspicious Session</h3>
+                        <div class="prot-result prot-challenge">Smart CAPTCHA</div>
+                        <div class="prot-score">Score: 0.52</div>
+                    </div>
+                    <div class="protection-card prot-bot">
+                        <div class="prot-emoji">🤖</div>
+                        <h3>Malicious Bot</h3>
+                        <div class="prot-result prot-block">Blocked Silently</div>
+                        <div class="prot-score">Score: 0.08</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== HOW IT WORKS PAGE ==================== -->
+    <main class="page" id="page-how-it-works" data-page="how-it-works">
+        <div class="bg-grid-overlay"></div>
+        <section class="hiw-hero">
+            <div class="container">
+                <div class="section-header" style="padding-top:120px">
+                    <span class="section-tag tag-blue">ARCHITECTURE</span>
+                    <h2 class="section-title">How VigilX Works Under the Hood</h2>
+                    <p class="section-desc">From raw browser events to bot/human classification in under 50ms.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="pipeline-section">
+            <div class="container">
+                <div class="pipeline">
+                    <div class="pipeline-step" data-step="1">
+                        <div class="step-badge">01</div>
+                        <div class="step-icon">📡</div>
+                        <h3>SDK Collection</h3>
+                        <p>Lightweight JS SDK (&lt;15KB) captures MouseEvent, KeyboardEvent, TouchEvent data silently.</p>
+                        <div class="step-tech">Vanilla JS · WebSocket</div>
+                    </div>
+                    <div class="pipeline-arrow">
+                        <svg viewBox="0 0 40 24" width="40" height="24"><path d="M0 12h32M24 4l8 8-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    </div>
+                    <div class="pipeline-step" data-step="2">
+                        <div class="step-badge">02</div>
+                        <div class="step-icon">📊</div>
+                        <h3>Feature Extraction</h3>
+                        <p>Raw events → 24 behavioral features: velocity, jitter, rhythm, pressure, curvature.</p>
+                        <div class="step-tech">NumPy · Pandas</div>
+                    </div>
+                    <div class="pipeline-arrow">
+                        <svg viewBox="0 0 40 24" width="40" height="24"><path d="M0 12h32M24 4l8 8-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    </div>
+                    <div class="pipeline-step" data-step="3">
+                        <div class="step-badge">03</div>
+                        <div class="step-icon">🧠</div>
+                        <h3>ML Inference</h3>
+                        <p>Random Forest classifier (v1) upgradable to LSTM. Trained on synthetic + real behavioral data.</p>
+                        <div class="step-tech">scikit-learn · ONNX</div>
+                    </div>
+                    <div class="pipeline-arrow">
+                        <svg viewBox="0 0 40 24" width="40" height="24"><path d="M0 12h32M24 4l8 8-8 8" stroke="currentColor" stroke-width="2" fill="none"/></svg>
+                    </div>
+                    <div class="pipeline-step" data-step="4">
+                        <div class="step-badge">04</div>
+                        <div class="step-icon">⚡</div>
+                        <h3>Score & Act</h3>
+                        <p>Human probability (0-1). &gt;0.7 = allow, 0.3-0.7 = CAPTCHA, &lt;0.3 = block.</p>
+                        <div class="step-tech">Redis · FastAPI</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="techstack-section">
+            <div class="container">
+                <h3 class="techstack-title">Full Technology Stack</h3>
+                <div class="techstack-grid">
+                    <div class="tech-chip"><span class="chip-color" style="background:#f7df1e"></span>JavaScript SDK</div>
+                    <div class="tech-chip"><span class="chip-color" style="background:#3776ab"></span>FastAPI (Python)</div>
+                    <div class="tech-chip"><span class="chip-color" style="background:#ff6f00"></span>scikit-learn / ONNX</div>
+                    <div class="tech-chip"><span class="chip-color" style="background:#dc382d"></span>Redis (Sessions)</div>
+                    <div class="tech-chip"><span class="chip-color" style="background:#336791"></span>PostgreSQL</div>
+                    <div class="tech-chip"><span class="chip-color" style="background:#2496ed"></span>Docker</div>
+                    <div class="tech-chip"><span class="chip-color" style="background:#61dafb"></span>React Dashboard</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="edge-cases-section">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-tag tag-purple">EDGE CASES</span>
+                    <h2 class="section-title">Built for the Real World</h2>
+                </div>
+                <div class="edge-grid">
+                    <div class="edge-card"><span class="edge-emoji">♿</span><h4>Accessibility</h4><p>Keyboard-only model variant with wider scoring thresholds for users with motor disabilities.</p></div>
+                    <div class="edge-card"><span class="edge-emoji">🔒</span><h4>VPN/Tor Users</h4><p>IP-agnostic scoring — behavior matters, not network source.</p></div>
+                    <div class="edge-card"><span class="edge-emoji">🔑</span><h4>Password Managers</h4><p>Auto-fill detection excluded from typing analysis to prevent false positives.</p></div>
+                    <div class="edge-card"><span class="edge-emoji">📱</span><h4>Mobile vs Desktop</h4><p>Touch events use separately trained model from mouse events.</p></div>
+                    <div class="edge-card"><span class="edge-emoji">🌐</span><h4>Slow Connections</h4><p>Batched data via POST every 3s with graceful degradation on 2G/3G.</p></div>
+                    <div class="edge-card"><span class="edge-emoji">🤖</span><h4>Headless Browsers</h4><p>Detects Puppeteer, Playwright, Selenium via behavioral anomalies.</p></div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== LIVE DEMO PAGE ==================== -->
+    <main class="page" id="page-demo" data-page="demo">
+        <div class="bg-grid-overlay"></div>
+        <section class="demo-section">
+            <div class="container">
+                <div class="section-header" style="padding-top:120px">
+                    <span class="section-tag tag-green">LIVE DEMO</span>
+                    <h2 class="section-title">See VigilX In Action</h2>
+                    <p class="section-desc">Move your mouse, type below, and watch VigilX analyze your behavior in real-time.</p>
+                </div>
+
+                <div class="demo-layout">
+                    <div class="demo-interact-zone">
+                        <div class="demo-panel">
+                            <h4 class="demo-panel-title">🖱️ Mouse Tracking Zone</h4>
+                            <div class="mouse-track-area" id="mouseTrackArea">
+                                <canvas id="mouseCanvas" width="500" height="300"></canvas>
+                                <div class="mouse-cursor-ghost" id="mouseGhost"></div>
+                            </div>
+                            <div class="mouse-metrics">
+                                <div class="metric"><span class="metric-label">Velocity</span><span class="metric-value" id="metricVelocity">0.00</span></div>
+                                <div class="metric"><span class="metric-label">Jitter</span><span class="metric-value" id="metricJitter">0.00</span></div>
+                                <div class="metric"><span class="metric-label">Curvature</span><span class="metric-value" id="metricCurvature">0.00</span></div>
+                                <div class="metric"><span class="metric-label">Acceleration</span><span class="metric-value" id="metricAccel">0.00</span></div>
+                            </div>
+                        </div>
+
+                        <div class="demo-panel">
+                            <h4 class="demo-panel-title">⌨️ Typing Analysis</h4>
+                            <textarea class="typing-area" id="typingArea" placeholder="Type anything here to analyze your typing biometrics..."></textarea>
+                            <div class="typing-metrics">
+                                <div class="metric"><span class="metric-label">Key Hold</span><span class="metric-value" id="metricKeyHold">0ms</span></div>
+                                <div class="metric"><span class="metric-label">Flight Time</span><span class="metric-value" id="metricFlight">0ms</span></div>
+                                <div class="metric"><span class="metric-label">WPM</span><span class="metric-value" id="metricWPM">0</span></div>
+                                <div class="metric"><span class="metric-label">Rhythm</span><span class="metric-value" id="metricRhythm">—</span></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="demo-score-zone">
+                        <div class="score-ring-container">
+                            <div class="score-ring">
+                                <svg viewBox="0 0 200 200" class="ring-svg-demo">
+                                    <circle cx="100" cy="100" r="85" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="8"/>
+                                    <circle cx="100" cy="100" r="85" fill="none" stroke="url(#demoRingGrad)" stroke-width="8"
+                                            stroke-dasharray="534" stroke-dashoffset="534" stroke-linecap="round"
+                                            class="score-ring-progress" id="scoreRingProgress"/>
+                                    <defs>
+                                        <linearGradient id="demoRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                            <stop offset="0%" stop-color="#00ff88"/>
+                                            <stop offset="100%" stop-color="#00b4d8"/>
+                                        </linearGradient>
+                                    </defs>
+                                </svg>
+                                <div class="score-ring-center">
+                                    <span class="score-value" id="demoScore">0.00</span>
+                                    <span class="score-label">Human Score</span>
+                                </div>
+                            </div>
+                            <div class="score-verdict" id="scoreVerdict">
+                                <span class="verdict-icon">⏳</span>
+                                <span class="verdict-text">Waiting for data...</span>
+                            </div>
+                        </div>
+
+                        <div class="analysis-feed">
+                            <h4 class="demo-panel-title">📊 Analysis Feed</h4>
+                            <div class="feed-items" id="feedItems">
+                                <div class="feed-item feed-info">
+                                    <span class="feed-time">now</span>
+                                    <span class="feed-msg">Move your mouse and type to begin analysis...</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="feature-vector-panel">
+                            <h4 class="demo-panel-title">🧬 Feature Vector (24 dims)</h4>
+                            <div class="feature-bars" id="featureBars"></div>
+                        </div>
+                        
+                        <div class="simulation-panel" style="margin-top: 20px; background: rgba(255,255,255,0.02); padding: 15px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);">
+                            <h4 class="demo-panel-title">🎯 Attack Simulator</h4>
+                            <p style="font-size: 0.8rem; color: #a0a0b0; margin-bottom: 10px;">Send synthetic payloads to the FastAPI backend.</p>
+                            <div style="display: flex; gap: 10px;">
+                                <button id="btnSimulateBot" class="btn" style="flex: 1; padding: 8px; font-size: 0.85rem; background: rgba(255,77,77,0.1); color: #ff4d4d; border: 1px solid #ff4d4d; cursor: pointer; border-radius: 4px;">Simulate Bot</button>
+                                <button id="btnSimulateHuman" class="btn" style="flex: 1; padding: 8px; font-size: 0.85rem; background: rgba(0,255,136,0.1); color: #00ff88; border: 1px solid #00ff88; cursor: pointer; border-radius: 4px;">Simulate Human</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== PRICING PAGE ==================== -->
+    <main class="page" id="page-pricing" data-page="pricing">
+        <div class="bg-grid-overlay"></div>
+        <div class="floating-orb hero-orb-1"></div>
+        <div class="floating-orb hero-orb-2"></div>
+        <section class="pricing-page-section">
+            <div class="container">
+                <div class="section-header" style="padding-top:120px">
+                    <span class="section-tag tag-gold">PRICING</span>
+                    <h2 class="section-title">Simple, Transparent Pricing</h2>
+                    <p class="section-desc">Start free. Scale as you grow. No hidden fees.</p>
+                </div>
+
+                <div class="billing-toggle">
+                    <span class="toggle-label">Monthly</span>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="billingToggle">
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span class="toggle-label">Yearly <span class="save-badge">Save 20%</span></span>
+                </div>
+
+                <div class="pricing-grid">
+                    <div class="price-card" data-tilt>
+                        <div class="price-tier">Free</div>
+                        <div class="price-amount">
+                            <span class="price-currency">₹</span>
+                            <span class="price-value" data-monthly="0" data-yearly="0">0</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <div class="price-sessions">Up to 10K sessions/month</div>
+                        <ul class="price-features">
+                            <li>Basic bot detection</li>
+                            <li>Community support</li>
+                            <li>Standard dashboard</li>
+                            <li>1 site</li>
+                        </ul>
+                        <button class="btn btn-ghost price-btn">Get Started Free</button>
+                        <div class="price-target">Startups & Student Projects</div>
+                    </div>
+                    <div class="price-card price-featured" data-tilt>
+                        <div class="price-popular-badge">MOST POPULAR</div>
+                        <div class="price-tier">Pro</div>
+                        <div class="price-amount">
+                            <span class="price-currency">₹</span>
+                            <span class="price-value" data-monthly="4999" data-yearly="3999">4,999</span>
+                            <span class="price-period">/month</span>
+                        </div>
+                        <div class="price-sessions">Up to 500K sessions/month</div>
+                        <ul class="price-features">
+                            <li>Advanced ML models</li>
+                            <li>Priority support</li>
+                            <li>Custom rules engine</li>
+                            <li>Analytics API</li>
+                            <li>5 sites</li>
+                            <li>Webhook integrations</li>
+                        </ul>
+                        <button class="btn btn-primary price-btn">Start Pro Trial</button>
+                        <div class="price-target">E-commerce & SaaS</div>
+                    </div>
+                    <div class="price-card" data-tilt>
+                        <div class="price-tier">Enterprise</div>
+                        <div class="price-amount">
+                            <span class="price-value">Custom</span>
+                        </div>
+                        <div class="price-sessions">Unlimited sessions</div>
+                        <ul class="price-features">
+                            <li>On-premise deployment</li>
+                            <li>Dedicated support & SLA</li>
+                            <li>Custom ML models</li>
+                            <li>White-label option</li>
+                            <li>Unlimited sites</li>
+                            <li>DPDP audit reports</li>
+                        </ul>
+                        <button class="btn btn-ghost price-btn">Contact Sales</button>
+                        <div class="price-target">Banks & Government</div>
+                    </div>
+                </div>
+
+                <div class="compliance-bar">
+                    <div class="compliance-badge"><span>🇮🇳</span> DPDP Act 2023 Compliant</div>
+                    <div class="compliance-badge"><span>🔒</span> No PII Stored</div>
+                    <div class="compliance-badge"><span>📋</span> Session-Scoped Data</div>
+                    <div class="compliance-badge"><span>🗑️</span> Auto-Delete After Scoring</div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== DOCS PAGE ==================== -->
+    <main class="page" id="page-docs" data-page="docs">
+        <div class="bg-grid-overlay"></div>
+        <section class="docs-section">
+            <div class="container">
+                <div class="section-header" style="padding-top:120px">
+                    <span class="section-tag tag-blue">DOCUMENTATION</span>
+                    <h2 class="section-title">Get Started in 5 Minutes</h2>
+                    <p class="section-desc">Integrate VigilX into any web application with just 3 lines of code.</p>
+                </div>
+
+                <div class="docs-layout">
+                    <nav class="docs-sidebar">
+                        <div class="docs-nav-group">
+                            <h5>Getting Started</h5>
+                            <a href="#" class="docs-nav-link active" data-doc="quickstart">Quick Start</a>
+                            <a href="#" class="docs-nav-link" data-doc="installation">Installation</a>
+                            <a href="#" class="docs-nav-link" data-doc="configuration">Configuration</a>
+                        </div>
+                        <div class="docs-nav-group">
+                            <h5>API Reference</h5>
+                            <a href="#" class="docs-nav-link" data-doc="analyze">POST /api/analyze</a>
+                            <a href="#" class="docs-nav-link" data-doc="sessions">GET /api/sessions</a>
+                            <a href="#" class="docs-nav-link" data-doc="websocket">WebSocket /ws/live</a>
+                        </div>
+                        <div class="docs-nav-group">
+                            <h5>Advanced</h5>
+                            <a href="#" class="docs-nav-link" data-doc="custom-rules">Custom Rules</a>
+                            <a href="#" class="docs-nav-link" data-doc="self-host">Self-Hosting</a>
+                        </div>
+                    </nav>
+
+                    <div class="docs-content" id="docsContent">
+                        <div class="doc-section" id="doc-quickstart">
+                            <h3>Quick Start Guide</h3>
+                            <p>Add VigilX to your website in 3 simple steps:</p>
+
+                            <div class="doc-step">
+                                <div class="doc-step-num">1</div>
+                                <div>
+                                    <h4>Add the VigilX SDK</h4>
+                                    <p>Include the SDK script in your HTML head:</p>
+                                    <div class="code-block">
+                                        <div class="code-header"><span>HTML</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)">Copy</button></div>
+                                        <pre><code>&lt;script src="https://cdn.vigilx.dev/sdk/v1.js" async&gt;&lt;/script&gt;</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="doc-step">
+                                <div class="doc-step-num">2</div>
+                                <div>
+                                    <h4>Initialize VigilX</h4>
+                                    <p>Call <code>vigilx.init()</code> with your site key:</p>
+                                    <div class="code-block">
+                                        <div class="code-header"><span>JavaScript</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)">Copy</button></div>
+                                        <pre><code>vigilx.init({
+  siteKey: 'vx_live_xxxxxxxxxxxx',
+  endpoint: 'https://api.vigilx.dev',
+  mode: 'passive',
+  sensitivity: 0.7,
+  onScore: (result) =&gt; {
+    console.log('Human score:', result.score);
+    console.log('Action:', result.action);
+  }
+});</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="doc-step">
+                                <div class="doc-step-num">3</div>
+                                <div>
+                                    <h4>Handle Results</h4>
+                                    <p>Use the score callback to make decisions:</p>
+                                    <div class="code-block">
+                                        <div class="code-header"><span>JavaScript</span><button class="copy-btn" onclick="navigator.clipboard.writeText(this.closest('.code-block').querySelector('code').textContent)">Copy</button></div>
+                                        <pre><code>vigilx.onScore((result) =&gt; {
+  if (result.action === 'allow') {
+    submitForm(); // Human verified
+  } else if (result.action === 'challenge') {
+    showCaptcha(); // Suspicious
+  } else {
+    blockRequest(); // Bot detected
+  }
+});</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="doc-section" style="margin-top:48px">
+                            <h3>API Reference</h3>
+                            <div class="api-endpoint">
+                                <div class="api-method post">POST</div>
+                                <code class="api-path">/api/v1/analyze</code>
+                            </div>
+                            <p>Submit behavioral data for bot/human classification.</p>
+                            <div class="code-block">
+                                <div class="code-header"><span>Request Body (JSON)</span></div>
+                                <pre><code>{
+  "session_id": "vx_sess_abc123",
+  "events": {
+    "mouse": [...],
+    "keyboard": [...],
+    "touch": [...]
+  },
+  "metadata": {
+    "user_agent": "...",
+    "screen_size": "1920x1080"
+  }
+}</code></pre>
+                            </div>
+                            <div class="code-block">
+                                <div class="code-header"><span>Response (JSON)</span></div>
+                                <pre><code>{
+  "score": 0.94,
+  "action": "allow",
+  "features_analyzed": 24,
+  "inference_time_ms": 23,
+  "session_hash": "a1b2c3...",
+  "confidence": "high"
+}</code></pre>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- ==================== LOGIN PAGE ==================== -->
+    <main class="page" id="page-login" data-page="login">
+        <section class="section">
+            <div class="container">
+                <div class="login-wrapper">
+                    <div class="login-info-box">
+                        <h2>Welcome back.</h2>
+                        <p>Sign in to access your VigilX Dashboard and real-time threat intelligence.</p>
+                        <div class="login-protection-badge">
+                            <span class="icon">✅</span> This form is protected by VigilX Invisible SDK
+                        </div>
+                    </div>
+                    <div class="login-form-box" id="authFormBox">
+                        <div id="loginSection">
+                            <h3 class="login-title">Sign In</h3>
+                            <p class="login-err" id="loginError" style="display:none; color: #ff4d4d; font-size: 0.85rem; margin-bottom: 15px;"></p>
+                            <form id="loginForm">
+                                <div class="form-group">
+                                    <label for="loginEmail">Work Email</label>
+                                    <input type="email" id="loginEmail" placeholder="admin@vigilx.dev" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="loginPassword">Password</label>
+                                    <input type="password" id="loginPassword" placeholder="admin123" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%;">Access Dashboard</button>
+                            </form>
+                            <p style="text-align:center; font-size: 0.85rem; color:#a0a0b0; margin-top:20px;">
+                                Don't have an account? <span id="showRegisterBtn" style="color:#00b4d8; cursor:pointer;">Create Account</span>
+                            </p>
+                        </div>
+                        
+                        <div id="registerSection" style="display:none;">
+                            <h3 class="login-title">Create Account</h3>
+                            <p class="login-err" id="registerError" style="display:none; color: #ff4d4d; font-size: 0.85rem; margin-bottom: 15px;"></p>
+                            <form id="registerForm">
+                                <div class="form-group">
+                                    <label for="regName">Full Name</label>
+                                    <input type="text" id="regName" placeholder="e.g. John Doe" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regEmail">Work Email</label>
+                                    <input type="email" id="regEmail" placeholder="john@company.com" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="regPassword">Password (Min 6)</label>
+                                    <input type="password" id="regPassword" required>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="registerBtn" style="width: 100%;">Sign Up securely</button>
+                            </form>
+                            <p style="text-align:center; font-size: 0.85rem; color:#a0a0b0; margin-top:20px;">
+                                Already have an account? <span id="showLoginBtn" style="color:#00b4d8; cursor:pointer;">Sign In</span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer" id="siteFooter">
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <div class="footer-logo"><span class="logo-accent">Vigil</span>X</div>
+                    <p>Intelligent Real-Time Bot Defence. Making the internet safer, one session at a time.</p>
+                </div>
+                <div class="footer-col">
+                    <h5>Product</h5>
+                    <a href="#how-it-works" data-navigate="how-it-works">How It Works</a>
+                    <a href="#demo" data-navigate="demo">Live Demo</a>
+                    <a href="#pricing" data-navigate="pricing">Pricing</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Company</h5>
+                    <a href="#">About Us</a>
+                    <a href="#">Blog</a>
+                    <a href="#">Careers</a>
+                    <a href="#">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h5>Legal</h5>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">DPDP Compliance</a>
+                    <a href="#">Security</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2025 VigilX by Team Bharat Tech. All rights reserved.</span>
+                <div class="footer-socials">
+                    <a href="https://github.com/vigilx" target="_blank" rel="noopener">GitHub</a>
+                    <span>&middot;</span>
+                    <a href="mailto:team@vigilx.dev">team@vigilx.dev</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== CHATBOT WIDGET ==================== -->
+    <div class="chatbot-wrapper" id="chatbotWrapper">
+        <div class="chatbot-window" id="chatbotWindow" style="display: none;">
+            <div class="chat-header">
+                <div class="chat-title">
+                    <span class="bot-status-dot"></span>
+                    VigilX Assistant
+                </div>
+                <button class="chat-close" id="chatCloseBtn">&times;</button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-msg bot-msg">Hello! I am the VigilX integration assistant. Ask me about pricing, installation, or bot mechanics!</div>
+            </div>
+            <div class="chat-footer">
+                <input type="text" id="chatInput" placeholder="Type your question..." autocomplete="off">
+                <button id="chatSendBtn" class="chat-send">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                </button>
+            </div>
+        </div>
+        <div class="chatbot-trigger" id="chatbotTrigger">
+            <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script src="js/three-scene.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/behavior-tracker.js"></script>
+    <script src="js/animations.js"></script>
+    <script src="js/demo.js"></script>
+    <script src="js/chatbot.js"></script>
+    <script src="js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,285 @@
+/* ==============================================
+   VigilX — Live Demo Page
+   ============================================== */
+
+.demo-section {
+    position: relative;
+    z-index: 1;
+    padding-bottom: 80px;
+}
+
+.demo-layout {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 24px;
+    align-items: start;
+}
+
+.demo-interact-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.demo-panel {
+    padding: 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    backdrop-filter: blur(8px);
+}
+
+.demo-panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* ============ Mouse Tracking ============ */
+.mouse-track-area {
+    position: relative;
+    width: 100%;
+    height: 300px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+    cursor: crosshair;
+}
+
+.mouse-track-area canvas {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+.mouse-cursor-ghost {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    border: 2px solid var(--accent-green);
+    border-radius: 50%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 10px rgba(0, 255, 136, 0.3);
+}
+
+.mouse-metrics, .typing-metrics {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* ============ Typing Area ============ */
+.typing-area {
+    width: 100%;
+    height: 100px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-primary);
+    font-family: var(--font-main);
+    font-size: 14px;
+    line-height: 1.6;
+    resize: none;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.typing-area:focus {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.08);
+}
+
+.typing-area::placeholder {
+    color: var(--text-muted);
+}
+
+/* ============ Score Zone ============ */
+.demo-score-zone {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    position: sticky;
+    top: calc(var(--navbar-height) + 20px);
+}
+
+.score-ring-container {
+    padding: 32px 24px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    text-align: center;
+}
+
+.score-ring {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin: 0 auto 16px;
+}
+
+.ring-svg-demo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+}
+
+.score-ring-center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.score-value {
+    font-size: 40px;
+    font-weight: 800;
+    font-family: var(--font-mono);
+    background: var(--gradient-main);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.score-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: 600;
+}
+
+.score-verdict {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.score-verdict.verdict-allow {
+    border-color: rgba(0, 255, 136, 0.2);
+    background: rgba(0, 255, 136, 0.04);
+    color: var(--accent-green);
+}
+
+.score-verdict.verdict-challenge {
+    border-color: rgba(255, 159, 67, 0.2);
+    background: rgba(255, 159, 67, 0.04);
+    color: var(--accent-orange);
+}
+
+.score-verdict.verdict-block {
+    border-color: rgba(255, 71, 87, 0.2);
+    background: rgba(255, 71, 87, 0.04);
+    color: var(--accent-red);
+}
+
+/* ============ Analysis Feed ============ */
+.analysis-feed {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+}
+
+.feed-items {
+    max-height: 200px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.feed-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 11px;
+    animation: feedSlideIn 0.3s ease;
+}
+
+.feed-time {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--text-muted);
+    flex-shrink: 0;
+    width: 36px;
+}
+
+.feed-msg {
+    color: var(--text-secondary);
+}
+
+.feed-info { background: rgba(0, 180, 216, 0.04); }
+.feed-success { background: rgba(0, 255, 136, 0.04); }
+.feed-warning { background: rgba(255, 159, 67, 0.04); }
+.feed-danger { background: rgba(255, 71, 87, 0.04); }
+
+/* ============ Feature Vector ============ */
+.feature-vector-panel {
+    padding: 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+}
+
+.feature-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.fbar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.fbar-label {
+    font-size: 9px;
+    font-family: var(--font-mono);
+    color: var(--text-muted);
+    width: 60px;
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.fbar-track {
+    flex: 1;
+    height: 6px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.fbar-fill {
+    height: 100%;
+    background: var(--gradient-main);
+    border-radius: 3px;
+    transition: width 0.5s ease;
+    width: 0%;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 900px) {
+    .demo-layout { grid-template-columns: 1fr; }
+    .demo-score-zone { position: static; }
+}

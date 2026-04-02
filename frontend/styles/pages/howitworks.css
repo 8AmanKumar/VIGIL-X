@@ -1,0 +1,203 @@
+/* ==============================================
+   VigilX — How It Works Page
+   ============================================== */
+
+.hiw-hero { padding-bottom: 20px; position: relative; z-index: 1; }
+
+/* ============ Pipeline ============ */
+.pipeline-section {
+    position: relative;
+    z-index: 1;
+    padding: 40px 0 60px;
+}
+
+.pipeline {
+    display: flex;
+    align-items: stretch;
+    gap: 12px;
+}
+
+.pipeline-step {
+    flex: 1;
+    padding: 24px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    text-align: center;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.pipeline-step::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-main);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.pipeline-step:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-active);
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-glow);
+}
+
+.pipeline-step:hover::before { opacity: 1; }
+
+.step-badge {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--accent-green);
+    background: rgba(0, 255, 136, 0.08);
+    padding: 3px 10px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    letter-spacing: 1px;
+}
+
+.step-icon { font-size: 32px; margin-bottom: 12px; }
+
+.pipeline-step h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.pipeline-step p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 14px;
+}
+
+.step-tech {
+    display: inline-block;
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--accent-blue);
+    background: rgba(0, 180, 216, 0.08);
+    padding: 5px 12px;
+    border-radius: 6px;
+    letter-spacing: 0.5px;
+}
+
+.pipeline-arrow {
+    display: flex;
+    align-items: center;
+    color: var(--text-muted);
+    flex-shrink: 0;
+}
+
+.pipeline-arrow svg {
+    opacity: 0.4;
+}
+
+/* ============ Tech Stack ============ */
+.techstack-section {
+    position: relative;
+    z-index: 1;
+    padding: 40px 0 60px;
+}
+
+.techstack-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.techstack-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.tech-chip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 500;
+    background: var(--bg-card);
+    transition: var(--transition-fast);
+}
+
+.tech-chip:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+}
+
+.chip-color {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* ============ Edge Cases ============ */
+.edge-cases-section {
+    position: relative;
+    z-index: 1;
+    padding: 60px 0 100px;
+}
+
+.edge-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.edge-card {
+    padding: 24px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    background: var(--bg-card);
+    transition: var(--transition);
+}
+
+.edge-card:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-hover);
+    transform: translateY(-3px);
+}
+
+.edge-emoji {
+    font-size: 28px;
+    display: block;
+    margin-bottom: 12px;
+}
+
+.edge-card h4 {
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 6px;
+}
+
+.edge-card p {
+    font-size: 12px;
+    color: var(--text-secondary);
+    line-height: 1.5;
+}
+
+/* ============ Responsive ============ */
+@media (max-width: 768px) {
+    .pipeline { flex-direction: column; }
+    .pipeline-arrow { transform: rotate(90deg); justify-content: center; padding: 8px 0; }
+    .edge-grid { grid-template-columns: 1fr; }
+}
