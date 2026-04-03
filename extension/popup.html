@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>VigilX</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="logo">
+        <span class="logo-text">VIGIL<span class="highlight">X</span></span>
+      </div>
+      <div class="status">
+        <span class="status-dot green" id="global-status-dot"></span>
+        <span id="global-status-text">Active</span>
+      </div>
+    </header>
+
+    <main>
+      <section class="card url-scanner">
+        <h3>Page Analysis</h3>
+        <p class="url-display" id="current-url">Loading...</p>
+        <div class="scan-result" id="scan-result">
+          <span class="score" id="threat-score">--</span>
+          <p class="verdict" id="threat-verdict">Scanning...</p>
+        </div>
+        <button id="rescan-btn" class="btn">Rescan Page</button>
+      </section>
+
+      <section class="card chatbot">
+        <h3>VigilX Assistant</h3>
+        <div class="chat-window" id="chat-window">
+          <div class="message bot">Hello! I'm VigilX AI. How can I help?</div>
+        </div>
+        <div class="chat-input-area">
+          <input type="text" id="chat-input" placeholder="Ask about security...">
+          <button id="send-btn" class="btn primary">Send</button>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Protected by VigilX Engine v2.0
+    </footer>
+  </div>
+  <script src="popup.js"></script>
+</body>
+</html>
