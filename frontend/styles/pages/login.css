@@ -1,65 +1,371 @@
-/* Login Page Split View */
-.login-wrapper {
-    display: flex;
-    min-height: 70vh;
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    background: rgba(10, 10, 15, 0.6);
-    backdrop-filter: blur(20px);
-    border-radius: 16px;
+/* ==============================================
+   VigilX — 3D Login Landing Page
+   Full-screen immersive auth experience
+   ============================================== */
+
+/* ─── Full-screen Login Container ─── */
+#page-login {
+    position: relative;
+    min-height: 100vh;
     overflow: hidden;
 }
 
-.login-info-box {
-    flex: 1;
-    padding: 60px;
-    background: linear-gradient(135deg, rgba(0,255,136,0.1), rgba(0,180,216,0.05));
-    border-right: 1px solid rgba(255,255,255,0.05);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-}
-
-.login-info-box h2 {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 20px;
-}
-
-.login-info-box p {
-    color: var(--text-muted);
-    font-size: 1.1rem;
-    line-height: 1.6;
-    margin-bottom: 40px;
-}
-
-.login-protection-badge {
-    background: rgba(0,255,136,0.05);
-    border: 1px solid rgba(0,255,136,0.2);
-    padding: 15px 20px;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    color: var(--primary-green);
+#page-login .section {
+    min-height: 100vh;
     display: flex;
     align-items: center;
-    gap: 10px;
-}
-
-.login-form-box {
-    flex: 1;
-    padding: 60px;
-    display: flex;
-    flex-direction: column;
     justify-content: center;
+    padding: 0;
 }
 
-.login-title {
-    font-size: 2rem;
-    margin-bottom: 30px;
+/* ─── 3D Canvas Background ─── */
+.login-3d-canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+/* ─── Glassmorphic Auth Card ─── */
+.login-card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 440px;
+    padding: 48px 40px;
+    background: rgba(10, 10, 18, 0.75);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 24px;
+    box-shadow:
+        0 0 60px rgba(0, 255, 136, 0.06),
+        0 24px 48px rgba(0, 0, 0, 0.4);
+    animation: loginCardEntry 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes loginCardEntry {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Animated border glow */
+.login-card::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    border-radius: 25px;
+    padding: 1px;
+    background: linear-gradient(135deg, rgba(0, 255, 136, 0.3), transparent 40%, transparent 60%, rgba(0, 180, 216, 0.3));
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask-composite: exclude;
+    -webkit-mask-composite: xor;
+    pointer-events: none;
+    animation: borderRotate 4s linear infinite;
+}
+
+@keyframes borderRotate {
+    0% { background: linear-gradient(0deg, rgba(0, 255, 136, 0.3), transparent 40%, transparent 60%, rgba(0, 180, 216, 0.3)); }
+    25% { background: linear-gradient(90deg, rgba(0, 255, 136, 0.3), transparent 40%, transparent 60%, rgba(0, 180, 216, 0.3)); }
+    50% { background: linear-gradient(180deg, rgba(0, 255, 136, 0.3), transparent 40%, transparent 60%, rgba(0, 180, 216, 0.3)); }
+    75% { background: linear-gradient(270deg, rgba(0, 255, 136, 0.3), transparent 40%, transparent 60%, rgba(0, 180, 216, 0.3)); }
+    100% { background: linear-gradient(360deg, rgba(0, 255, 136, 0.3), transparent 40%, transparent 60%, rgba(0, 180, 216, 0.3)); }
+}
+
+/* ─── Brand Header ─── */
+.login-brand {
+    text-align: center;
+    margin-bottom: 32px;
+}
+
+.login-brand .login-shield {
+    width: 56px;
+    height: 56px;
+    margin: 0 auto 16px;
+    filter: drop-shadow(0 0 20px rgba(0, 255, 136, 0.3));
+}
+
+.login-brand h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+    margin-bottom: 6px;
+    color: var(--text-primary, #f0f0f5);
+}
+
+.login-brand p {
+    font-size: 0.85rem;
+    color: var(--text-muted, #6b6b7b);
+    line-height: 1.4;
+}
+
+/* ─── Auth Tabs ─── */
+.auth-tabs {
+    display: flex;
+    gap: 4px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.04);
+    border-radius: 12px;
+    margin-bottom: 28px;
+}
+
+.auth-tab {
+    flex: 1;
+    padding: 10px 0;
+    text-align: center;
+    font-size: 0.85rem;
     font-weight: 600;
+    color: var(--text-muted, #6b6b7b);
+    background: transparent;
+    border: none;
+    border-radius: 9px;
+    cursor: pointer;
+    transition: all 0.3s ease;
 }
 
-@media (max-width: 768px) {
-    .login-wrapper { flex-direction: column; }
-    .login-info-box, .login-form-box { padding: 30px; }
-    .login-info-box { border-right: none; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.auth-tab:hover {
+    color: var(--text-secondary, #a0a0b0);
+}
+
+.auth-tab.active {
+    background: rgba(0, 255, 136, 0.1);
+    color: #00ff88;
+    box-shadow: 0 2px 8px rgba(0, 255, 136, 0.15);
+}
+
+/* ─── Auth Panels ─── */
+.auth-panel {
+    display: none;
+    animation: panelFadeIn 0.35s ease forwards;
+}
+
+.auth-panel.active {
+    display: block;
+}
+
+@keyframes panelFadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Form Groups ─── */
+.login-card .form-group {
+    margin-bottom: 18px;
+}
+
+.login-card .form-group label {
+    display: block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--text-secondary, #a0a0b0);
+    margin-bottom: 6px;
+    letter-spacing: 0.3px;
+}
+
+.login-card .form-group input {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 10px;
+    color: var(--text-primary, #f0f0f5);
+    font-size: 0.9rem;
+    font-family: inherit;
+    transition: all 0.3s ease;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.login-card .form-group input:focus {
+    border-color: rgba(0, 255, 136, 0.4);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: 0 0 0 3px rgba(0, 255, 136, 0.08);
+}
+
+.login-card .form-group input::placeholder {
+    color: rgba(255, 255, 255, 0.2);
+}
+
+/* ─── Submit Button ─── */
+.login-submit-btn {
+    width: 100%;
+    padding: 13px 0;
+    background: linear-gradient(135deg, #00ff88, #00b4d8);
+    color: #0a0a0c;
+    font-size: 0.9rem;
+    font-weight: 700;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 6px;
+    letter-spacing: 0.3px;
+}
+
+.login-submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 255, 136, 0.25);
+}
+
+.login-submit-btn:active {
+    transform: translateY(0);
+}
+
+.login-submit-btn.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+/* ─── Divider ─── */
+.auth-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 22px 0;
+    color: var(--text-muted, #6b6b7b);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+/* ─── Google Button ─── */
+.google-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 12px 0;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    color: var(--text-primary, #f0f0f5);
+    font-size: 0.88rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.google-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.18);
+    transform: translateY(-1px);
+}
+
+.google-btn svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* ─── Error Message ─── */
+.auth-error {
+    display: none;
+    padding: 10px 14px;
+    background: rgba(255, 77, 77, 0.08);
+    border: 1px solid rgba(255, 77, 77, 0.2);
+    border-radius: 8px;
+    color: #ff6b6b;
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+    animation: panelFadeIn 0.3s ease;
+}
+
+/* ─── Success notification ─── */
+.auth-success {
+    display: none;
+    padding: 10px 14px;
+    background: rgba(0, 255, 136, 0.08);
+    border: 1px solid rgba(0, 255, 136, 0.2);
+    border-radius: 8px;
+    color: #00ff88;
+    font-size: 0.82rem;
+    margin-bottom: 16px;
+    animation: panelFadeIn 0.3s ease;
+}
+
+/* ─── Protection Badge ─── */
+.login-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 24px;
+    padding: 10px;
+    background: rgba(0, 255, 136, 0.03);
+    border: 1px solid rgba(0, 255, 136, 0.08);
+    border-radius: 10px;
+    font-size: 0.72rem;
+    color: var(--text-muted, #6b6b7b);
+}
+
+.login-badge .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #00ff88;
+    animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(0, 255, 136, 0.4); }
+    50% { opacity: 0.6; box-shadow: 0 0 0 6px rgba(0, 255, 136, 0); }
+}
+
+/* ─── Floating Particles Behind Card ─── */
+.login-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.login-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(0, 255, 136, 0.3);
+    border-radius: 50%;
+    animation: floatParticle 8s ease-in-out infinite;
+}
+
+@keyframes floatParticle {
+    0%, 100% { transform: translateY(0) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    50% { transform: translateY(-120px) translateX(30px); }
+}
+
+/* ─── Responsive ─── */
+@media (max-width: 520px) {
+    .login-card {
+        margin: 20px;
+        padding: 32px 24px;
+        border-radius: 20px;
+    }
+    
+    .login-brand h2 {
+        font-size: 1.35rem;
+    }
 }

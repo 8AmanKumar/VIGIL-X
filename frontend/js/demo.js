@@ -57,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
     let currentScore = 0.50; 
     let targetScore = 0.50;
     let isBotBlocked = false;
+    let lastInteractionTime = 0;
+    let hasReceivedBackendScore = false;
+    let mouseDataCount = 0;
+    let keyDataCount = 0;
     
     function getLocalMousePos(canvas, globalX, globalY) {
         const rect = canvas.getBoundingClientRect();
@@ -79,6 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (type === 'feed-success') div.style.color = '#00ff88';
         if (type === 'feed-warn') div.style.color = '#f7df1e';
         if (type === 'feed-danger') div.style.color = '#ff4d4d';
+        if (type === 'feed-info') div.style.color = '#00b4d8';
         
         feedItems.insertBefore(div, feedItems.firstChild);
         if(feedItems.children.length > 5) {
@@ -86,15 +91,80 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // ─────── Local Heuristic Scoring ───────
+    // Calculates a human score locally so the ring updates in real-time
+    // even without backend connectivity. Backend score overrides when available.
+    function computeLocalScore(state) {
+        let score = 0.50;
+        let signals = 0;
+
+        // Mouse signals
+        if (state.mouse.velocity > 0.1) {
+            // Natural jitter = human
+            if (state.mouse.jitter > 0.03) {
+                score += 0.12;
+                signals++;
+            }
+            // Natural curvature = human
+            if (state.mouse.curvature > 0.003) {
+                score += 0.12;
+                signals++;
+            }
+            // Varied acceleration = human
+            if (state.mouse.acceleration > 2 && state.mouse.acceleration < 100) {
+                score += 0.08;
+                signals++;
+            }
+            // Moderate velocity = human (not too fast, not zero)
+            if (state.mouse.velocity > 0.5 && state.mouse.velocity < 20) {
+                score += 0.06;
+                signals++;
+            }
+        }
+
+        // Keyboard signals
+        if (state.keyboard.wpm > 0) {
+            // Natural rhythm variance = human
+            if (state.keyboard.rhythm > 1) {
+                score += 0.10;
+                signals++;
+            }
+            // Reasonable typing speed
+            if (state.keyboard.wpm > 10 && state.keyboard.wpm < 150) {
+                score += 0.08;
+                signals++;
+            }
+            // Natural flight time
+            if (state.keyboard.flightTime > 30 && state.keyboard.flightTime < 1000) {
+                score += 0.06;
+                signals++;
+            }
+            // Natural key hold
+            if (state.keyboard.keyHoldTime > 40 && state.keyboard.keyHoldTime < 300) {
+                score += 0.06;
+                signals++;
+            }
+        }
+
+        // Multi-signal confidence boost
+        if (signals >= 4) score += 0.08;
+        if (signals >= 6) score += 0.06;
+
+        return Math.max(0.0, Math.min(1.0, score));
+    }
+
     // Backend Webhook Hooking
     if (window.VigilXTracker) {
         window.VigilXTracker.onAnalysis((data) => {
+            hasReceivedBackendScore = true;
             targetScore = data.score;
             isBotBlocked = data.action === "Block";
             if(data.reasons && data.reasons.length > 0) {
-                createFeedItem('feed-danger', data.reasons[0]);
+                createFeedItem('feed-danger', `🤖 ${data.reasons[0]}`);
+            } else if (data.action === "Allow") {
+                createFeedItem('feed-success', `✅ Human validated (Latency: ${data.latency_ms}ms, Score: ${data.score.toFixed(2)})`);
             } else {
-                createFeedItem('feed-success', `Human validated natively (Latency: ${data.latency_ms}ms)`);
+                createFeedItem('feed-warn', `⚠️ Suspicious activity (Score: ${data.score.toFixed(2)})`);
             }
         });
     }
@@ -103,18 +173,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnBot = document.getElementById('btnSimulateBot');
     const btnHuman = document.getElementById('btnSimulateHuman');
 
-    if (btnBot && window.VigilXTracker) {
+    if (btnBot) {
         btnBot.addEventListener('click', () => {
-            createFeedItem('feed-warn', 'Injecting malicious synthetic payload...');
+            createFeedItem('feed-warn', '🎯 Injecting malicious synthetic payload...');
             
-            // Visual flair for bot injection
             isBotBlocked = true;
+            targetScore = 0.08;
+            hasReceivedBackendScore = true;
+
             for(let i=0; i<24; i++) {
                 featureBars.children[i].style.height = (80 + Math.random() * 20) + '%';
                 featureBars.children[i].style.backgroundColor = 'rgba(255, 77, 77, 0.8)';
             }
             
-            // Draw a straight red line across the canvas
             if(ctx) {
                 ctx.clearRect(0,0,width,height);
                 ctx.beginPath();
@@ -125,28 +196,48 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.stroke();
             }
 
-            window.VigilXTracker.triggerSimulation("bot");
+            if (window.VigilXTracker) {
+                window.VigilXTracker.triggerSimulation("bot");
+            }
+            
+            setTimeout(() => {
+                createFeedItem('feed-danger', '🤖 Bot signature detected: Selenium/Playwright API');
+            }, 500);
         });
     }
 
-    if (btnHuman && window.VigilXTracker) {
+    if (btnHuman) {
         btnHuman.addEventListener('click', () => {
-            createFeedItem('feed-info', 'Simulating benign human variance...');
+            createFeedItem('feed-info', '👤 Simulating benign human variance...');
             
             isBotBlocked = false;
+            targetScore = 0.96;
+            hasReceivedBackendScore = true;
+
             for(let i=0; i<24; i++) {
                 featureBars.children[i].style.height = (20 + Math.random() * 60) + '%';
                 featureBars.children[i].style.backgroundColor = 'rgba(0, 255, 136, 0.5)';
             }
-            window.VigilXTracker.triggerSimulation("human");
+
+            if (window.VigilXTracker) {
+                window.VigilXTracker.triggerSimulation("human");
+            }
+
+            setTimeout(() => {
+                createFeedItem('feed-success', '✅ Human verified — natural behavioral patterns confirmed');
+            }, 500);
         });
     }
 
+    // ─────── Main Render Loop ───────
+    let feedCooldown = 0;
+
     function renderLoop() {
-        if (!window.VigilXTracker) return requestAnimationFrame(renderLoop);
+        const state = window.VigilXTracker ? window.VigilXTracker.getState() : null;
         
-        const state = window.VigilXTracker.getState();
-        
+        if (!state) return requestAnimationFrame(renderLoop);
+
+        // Update metric displays
         if(metricVelocity) metricVelocity.innerText = formatNumber(state.mouse.velocity, 2);
         if(metricJitter) metricJitter.innerText = formatNumber(state.mouse.jitter, 2);
         if(metricCurvature) metricCurvature.innerText = formatNumber(state.mouse.curvature, 2);
@@ -157,7 +248,39 @@ document.addEventListener('DOMContentLoaded', () => {
         if(metricWPM) metricWPM.innerText = state.keyboard.wpm;
         if(metricRhythm) metricRhythm.innerText = formatNumber(state.keyboard.rhythm, 2);
 
-        // Render natural trail if not blocked intensely
+        // Track interaction
+        let isActive = state.mouse.velocity > 0.1 || (state.keyboard.flightTime > 0 && (Date.now() - state.keyboard.lastKeyTime < 2000));
+        
+        if (isActive) {
+            lastInteractionTime = Date.now();
+            
+            // Count data points for activity-based feed messages
+            if (state.mouse.velocity > 0.1) mouseDataCount++;
+            if (state.keyboard.wpm > 0) keyDataCount++;
+        }
+
+        // ─── Local score computation when no backend response ───
+        if (!hasReceivedBackendScore && isActive) {
+            const localScore = computeLocalScore(state);
+            targetScore = localScore;
+            
+            // Activity-based feed items
+            feedCooldown--;
+            if (feedCooldown <= 0) {
+                if (mouseDataCount > 30) {
+                    createFeedItem('feed-info', `📡 Mouse data collected (${mouseDataCount} events) — analyzing patterns...`);
+                    mouseDataCount = 0;
+                    feedCooldown = 120;
+                }
+                if (keyDataCount > 10) {
+                    createFeedItem('feed-info', `⌨️ Keystroke biometrics captured — rhythm analysis active`);
+                    keyDataCount = 0;
+                    feedCooldown = 120;
+                }
+            }
+        }
+
+        // Render natural trail if not blocked
         if (!isBotBlocked && ctx) {
             const localPos = getLocalMousePos(mouseCanvas, state.mouse.x, state.mouse.y);
             
@@ -181,30 +304,32 @@ document.addEventListener('DOMContentLoaded', () => {
                 ctx.lineJoin = 'round';
                 ctx.moveTo(trail[0].x, trail[0].y);
                 for(let i=1; i<trail.length; i++) {
-                    const p1 = trail[i];
-                    ctx.lineTo(p1.x, p1.y);
+                    ctx.lineTo(trail[i].x, trail[i].y);
                 }
                 const lastV = trail[trail.length-1].v;
-                ctx.strokeStyle = `rgba(0, 255, 136, ${Math.min(1, Math.max(0.2, lastV/10))})`;
+                const scoreColor = currentScore > 0.7 ? '0, 255, 136' : currentScore > 0.3 ? '247, 223, 30' : '255, 77, 77';
+                ctx.strokeStyle = `rgba(${scoreColor}, ${Math.min(1, Math.max(0.2, lastV/10))})`;
                 ctx.lineWidth = 3;
                 ctx.stroke();
             }
         }
 
         // Feature Bar natural variance
-        let isActive = state.mouse.velocity > 0.1 || (state.keyboard.flightTime > 0 && (Date.now() - state.keyboard.lastKeyTime < 2000));
         if (isActive && featureBars && featureBars.children.length === 24 && !isBotBlocked) {
             for(let i=0; i<24; i++) {
                 if(Math.random() < 0.2) {
                     let h = 10 + Math.random() * 70;
                     featureBars.children[i].style.height = `${h}%`;
-                    featureBars.children[i].style.backgroundColor = `rgba(0, 255, 136, ${h/100})`;
+                    const barColor = currentScore > 0.7 ? `rgba(0, 255, 136, ${h/100})` : 
+                                     currentScore > 0.3 ? `rgba(247, 223, 30, ${h/100})` :
+                                     `rgba(255, 77, 77, ${h/100})`;
+                    featureBars.children[i].style.backgroundColor = barColor;
                 }
             }
         }
 
-        // Score Sync
-        currentScore += (targetScore - currentScore) * 0.1; // Smooth interpolate
+        // ─── Score Ring Animation ───
+        currentScore += (targetScore - currentScore) * 0.08; // Smooth interpolation
         if(demoScore) demoScore.innerText = currentScore.toFixed(2);
         
         if(scoreRingProgress) {
@@ -217,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if(scoreVerdict) scoreVerdict.innerHTML = '<span class="verdict-icon">✅</span><span class="verdict-text" style="color:#00ff88">Verified Human</span>';
             } else if(currentScore > 0.3) {
                 scoreRingProgress.style.stroke = '#f7df1e';
-                if(scoreVerdict) scoreVerdict.innerHTML = '<span class="verdict-icon">⚠️</span><span class="verdict-text" style="color:#f7df1e">Checking...</span>';
+                if(scoreVerdict) scoreVerdict.innerHTML = '<span class="verdict-icon">⚠️</span><span class="verdict-text" style="color:#f7df1e">Analyzing...</span>';
             } else {
                 scoreRingProgress.style.stroke = '#ff4d4d';
                 if(scoreVerdict) scoreVerdict.innerHTML = '<span class="verdict-icon">🤖</span><span class="verdict-text" style="color:#ff4d4d">Bot Blocked</span>';

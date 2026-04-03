@@ -132,6 +132,43 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // ─────── Billing Toggle (Pricing Page) ───────
+    const billingToggle = document.getElementById('billingToggle');
+    if (billingToggle) {
+        billingToggle.addEventListener('change', () => {
+            const isYearly = billingToggle.checked;
+            const priceValues = document.querySelectorAll('.price-value[data-monthly]');
+            const periodLabels = document.querySelectorAll('.price-period');
+
+            priceValues.forEach(el => {
+                const monthly = parseInt(el.getAttribute('data-monthly'));
+                const yearly = parseInt(el.getAttribute('data-yearly'));
+                const newVal = isYearly ? yearly : monthly;
+                
+                // Animate the price change
+                el.style.transition = 'opacity 0.2s, transform 0.2s';
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(-8px)';
+                
+                setTimeout(() => {
+                    el.innerText = newVal === 0 ? '0' : newVal.toLocaleString('en-IN');
+                    el.style.opacity = '1';
+                    el.style.transform = 'translateY(0)';
+                }, 200);
+            });
+
+            // Update period labels
+            periodLabels.forEach(el => {
+                el.style.transition = 'opacity 0.2s';
+                el.style.opacity = '0';
+                setTimeout(() => {
+                    el.innerText = isYearly ? '/month (billed yearly)' : '/month';
+                    el.style.opacity = '1';
+                }, 200);
+            });
+        });
+    }
+
     // Check initial hash (or enforce auth)
     const initialHash = window.location.hash.replace('#', '');
     navigateTo(initialHash || 'home');

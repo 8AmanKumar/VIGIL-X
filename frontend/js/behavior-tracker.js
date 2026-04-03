@@ -163,7 +163,7 @@ const VigilXTracker = (() => {
             session_id: sessionId + "_bot",
             mouse: { velocity: 50.0, acceleration: 100.0, jitter: 0.0, curvature: 0.0 },
             keyboard: { wpm: 500, flightTime: 10, keyHoldTime: 10, rhythm: 0.0 },
-            is_simulation: True, // Python True wait JS boolean
+            is_simulation: true,
             simulation_type: "bot"
         }),
         triggerSimulation: (type) => sendPayload({

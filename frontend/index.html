@@ -486,10 +486,10 @@
                         <div class="price-tier">Pro</div>
                         <div class="price-amount">
                             <span class="price-currency">₹</span>
-                            <span class="price-value" data-monthly="4999" data-yearly="3999">4,999</span>
+                            <span class="price-value" data-monthly="399" data-yearly="319">399</span>
                             <span class="price-period">/month</span>
                         </div>
-                        <div class="price-sessions">Up to 500K sessions/month</div>
+                        <div class="price-sessions">Up to 100K sessions/month</div>
                         <ul class="price-features">
                             <li>Advanced ML models</li>
                             <li>Priority support</li>
@@ -661,61 +661,105 @@
         </section>
     </main>
 
-    <!-- ==================== LOGIN PAGE ==================== -->
+    <!-- ==================== LOGIN PAGE (3D Landing) ==================== -->
     <main class="page" id="page-login" data-page="login">
+        <canvas id="loginCanvas" class="login-3d-canvas"></canvas>
+        <div class="login-particles"></div>
         <section class="section">
-            <div class="container">
-                <div class="login-wrapper">
-                    <div class="login-info-box">
-                        <h2>Welcome back.</h2>
-                        <p>Sign in to access your VigilX Dashboard and real-time threat intelligence.</p>
-                        <div class="login-protection-badge">
-                            <span class="icon">✅</span> This form is protected by VigilX Invisible SDK
+            <div class="login-card">
+                <!-- Brand -->
+                <div class="login-brand">
+                    <svg class="login-shield" viewBox="0 0 80 80" fill="none">
+                        <path d="M40 5L10 20V40C10 57.5 22.5 73.5 40 78C57.5 73.5 70 57.5 70 40V20L40 5Z"
+                              stroke="url(#loginShieldGrad)" stroke-width="2" fill="url(#loginShieldFill)"/>
+                        <path d="M30 40L37 47L52 32" stroke="#00ff88" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                        <defs>
+                            <linearGradient id="loginShieldGrad" x1="10" y1="5" x2="70" y2="78">
+                                <stop offset="0%" stop-color="#00ff88"/>
+                                <stop offset="100%" stop-color="#00b4d8"/>
+                            </linearGradient>
+                            <linearGradient id="loginShieldFill" x1="10" y1="5" x2="70" y2="78">
+                                <stop offset="0%" stop-color="rgba(0,255,136,0.12)"/>
+                                <stop offset="100%" stop-color="rgba(0,180,216,0.06)"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h2><span style="color:#00ff88">Vigil</span>X</h2>
+                    <p>AI-Powered Real-Time Bot Defence Platform</p>
+                </div>
+
+                <!-- Auth Tabs -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" data-tab="panel-signin">Sign In</button>
+                    <button class="auth-tab" data-tab="panel-signup">Sign Up</button>
+                </div>
+
+                <!-- Sign In Panel -->
+                <div class="auth-panel active" id="panel-signin">
+                    <div class="auth-error" id="loginError"></div>
+
+                    <form id="loginForm">
+                        <div class="form-group">
+                            <label for="loginEmail">Email</label>
+                            <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
                         </div>
-                    </div>
-                    <div class="login-form-box" id="authFormBox">
-                        <div id="loginSection">
-                            <h3 class="login-title">Sign In</h3>
-                            <p class="login-err" id="loginError" style="display:none; color: #ff4d4d; font-size: 0.85rem; margin-bottom: 15px;"></p>
-                            <form id="loginForm">
-                                <div class="form-group">
-                                    <label for="loginEmail">Work Email</label>
-                                    <input type="email" id="loginEmail" placeholder="admin@vigilx.dev" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="loginPassword">Password</label>
-                                    <input type="password" id="loginPassword" placeholder="admin123" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary" id="loginBtn" style="width: 100%;">Access Dashboard</button>
-                            </form>
-                            <p style="text-align:center; font-size: 0.85rem; color:#a0a0b0; margin-top:20px;">
-                                Don't have an account? <span id="showRegisterBtn" style="color:#00b4d8; cursor:pointer;">Create Account</span>
-                            </p>
+                        <div class="form-group">
+                            <label for="loginPassword">Password</label>
+                            <input type="password" id="loginPassword" placeholder="••••••••" required autocomplete="current-password">
                         </div>
-                        
-                        <div id="registerSection" style="display:none;">
-                            <h3 class="login-title">Create Account</h3>
-                            <p class="login-err" id="registerError" style="display:none; color: #ff4d4d; font-size: 0.85rem; margin-bottom: 15px;"></p>
-                            <form id="registerForm">
-                                <div class="form-group">
-                                    <label for="regName">Full Name</label>
-                                    <input type="text" id="regName" placeholder="e.g. John Doe" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="regEmail">Work Email</label>
-                                    <input type="email" id="regEmail" placeholder="john@company.com" required>
-                                </div>
-                                <div class="form-group">
-                                    <label for="regPassword">Password (Min 6)</label>
-                                    <input type="password" id="regPassword" required>
-                                </div>
-                                <button type="submit" class="btn btn-primary" id="registerBtn" style="width: 100%;">Sign Up securely</button>
-                            </form>
-                            <p style="text-align:center; font-size: 0.85rem; color:#a0a0b0; margin-top:20px;">
-                                Already have an account? <span id="showLoginBtn" style="color:#00b4d8; cursor:pointer;">Sign In</span>
-                            </p>
+                        <button type="submit" class="login-submit-btn">Sign In</button>
+                    </form>
+
+                    <div class="auth-divider">or continue with</div>
+
+                    <button class="google-btn" type="button">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Sign in with Google
+                    </button>
+                </div>
+
+                <!-- Sign Up Panel -->
+                <div class="auth-panel" id="panel-signup">
+                    <div class="auth-error" id="registerError"></div>
+
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="regName">Full Name</label>
+                            <input type="text" id="regName" placeholder="John Doe" required autocomplete="name">
                         </div>
-                    </div>
+                        <div class="form-group">
+                            <label for="regEmail">Email</label>
+                            <input type="email" id="regEmail" placeholder="you@example.com" required autocomplete="email">
+                        </div>
+                        <div class="form-group">
+                            <label for="regPassword">Password</label>
+                            <input type="password" id="regPassword" placeholder="Min 6 characters" required autocomplete="new-password">
+                        </div>
+                        <button type="submit" class="login-submit-btn">Create Account</button>
+                    </form>
+
+                    <div class="auth-divider">or continue with</div>
+
+                    <button class="google-btn" type="button">
+                        <svg viewBox="0 0 24 24" width="18" height="18">
+                            <path fill="#4285f4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/>
+                            <path fill="#34a853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                            <path fill="#fbbc05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                            <path fill="#ea4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                        </svg>
+                        Sign up with Google
+                    </button>
+                </div>
+
+                <!-- Protection Badge -->
+                <div class="login-badge">
+                    <span class="badge-dot"></span>
+                    Protected by VigilX Invisible Behavioral SDK
                 </div>
             </div>
         </section>

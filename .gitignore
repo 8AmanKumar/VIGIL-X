@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# Database
+*.db
+*.sqlite3
+
+# OS Files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.iml
+
+# Environment Variables
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+nohup.out
+
+# Node (if any)
+node_modules/
+
+# Byte-compiled
+*.pyc
+
+# Render
+render.yaml
